@@ -2,13 +2,18 @@ import * as React from 'react';
 declare const chrome: any;
 
 import * as ReactDOM from 'react-dom';
-// import Frame, { FrameContextConsumer } from "react-frame-component";
-// import "./content.css";
+import "./content.less";
 import { CONTENT_MESSAGE_TYPES } from "./constants";
 
-class Main extends React.Component {
+interface IMainProps {}
+interface IMainState {
+  error: string;
+  message: string;
+}
+
+class Main extends React.Component<IMainProps, IMainState> {
   private url: string;
-  constructor(props: Readonly<{}>) {
+  constructor(props: IMainProps) {
     super(props);
     this.url = window.location.host;
     this.state = {
@@ -40,35 +45,18 @@ class Main extends React.Component {
   }
   public render() {
     return (
-      <div>
-        heu
+      <div id="shopify-scraper">
+        <h1>{window.location.host}</h1>
+        {this.state.error && <div>{this.state.error}</div>}
+        {!this.state.error &&<button onClick={this.scrapeCurrentWebsite.bind(this)}>
+          Scrape now
+        </button>}
+        {this.state.message}
       </div>
     );
-    // return (
-    //   head as Frame ={[
-    //       type as link = 'text/css'
-    //         rel= 'stylesheet'
-    //         href= {chrome.runtime.getURL('/static/css/content.css')}
-    //       > (/link> as )
-    //     ], , , , , , , ,,, , , , , , , , , , , ,,,,,,,,,}
-    //   >
-    //     ({// Callback is invoked with iframe's window and document instances
-    //       ({ document, window }) as FrameContextConsumer); => {
-    //         // Render Children
-    //         return (
-    //           className as div = {'my-extension'} >
-    //             ({window.location.host} as h1) < /h1>;
-    //         {this.state.error && ({this.state.error} as div) < /div>};
-    //          {!this.state.error && (onClick as button); = {this.scrapeCurrentWebsite.bind(this); } >
-    //               Scrape; now
-    //             < /button>};
-    //           {this.state.message; }
-    //           /div>; as;
-    //         )
-    //       }}
-    //         (/FrameContextConsumer> as )
-    //   < /Frame>;
-    // );
+  }
+  private scrapeCurrentWebsite() {
+
   }
 }
 
