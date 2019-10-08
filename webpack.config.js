@@ -31,7 +31,7 @@ module.exports = {
 
   entry: {
     content: './src/content.tsx',
-    background: './src/background.ts'
+    background: ["@babel/polyfill",'./src/background.ts']
   },
 
   output: {

@@ -2,10 +2,10 @@ import * as React from 'react';
 declare const chrome: any;
 
 import * as ReactDOM from 'react-dom';
-import "./content.less";
-import { CONTENT_MESSAGE_TYPES } from "./constants";
+import { CONTENT_MESSAGE_TYPES } from './constants';
+import './content.less';
 
-interface IMainProps {}
+interface IMainProps { }
 interface IMainState {
   error: string;
   message: string;
@@ -28,7 +28,7 @@ class Main extends React.Component<IMainProps, IMainState> {
     chrome.runtime.sendMessage(
       { message: CONTENT_MESSAGE_TYPES.CURRENT_URL, url: this.url },
       function(response: any) {
-        console.log(response);
+        console.log("TCL: Main -> componentDidMount -> response", response)
         // if (response.success) {
         //   self.setState({
         //     ...self.state,
@@ -45,10 +45,10 @@ class Main extends React.Component<IMainProps, IMainState> {
   }
   public render() {
     return (
-      <div id="shopify-scraper">
+      <div id='shopify-scraper'>
         <h1>{window.location.host}</h1>
         {this.state.error && <div>{this.state.error}</div>}
-        {!this.state.error &&<button onClick={this.scrapeCurrentWebsite.bind(this)}>
+        {!this.state.error && <button onClick={this.scrapeCurrentWebsite.bind(this)}>
           Scrape now
         </button>}
         {this.state.message}
