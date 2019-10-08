@@ -4,6 +4,9 @@ declare const chrome: any;
 interface IResponse {
   success: boolean;
 }
+interface IUrlRequestResponse extends IResponse {
+  isValid: boolean;
+}
 
 chrome.browserAction.onClicked.addListener((tab: any) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs: any[]) => {
@@ -25,10 +28,11 @@ chrome.runtime.onMessage.addListener( (request: { message: CONTENT_MESSAGE_TYPES
   return true;
 });
 
-const handleUrlRequest = async (url: string, reply: (response: Required<IResponse>) => any) => {
+const handleUrlRequest = async (url: string, reply: (response: IUrlRequestResponse) => any) => {
   const scraper = new Scraper(url);
   reply({
-    success: await scraper.isValid(),
+    isValid: await scraper.isValid(),
+    success: true,
   });
   return true;
 };

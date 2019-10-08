@@ -9,7 +9,22 @@ interface IMainProps { }
 interface IMainState {
   error: string;
   message: string;
+  isValid: boolean|'loading';
 }
+
+const sendMessage = (requestData: any, callback: (response: any) => any) => {
+  chrome.runtime.sendMessage(
+    requestData,
+    (response: any) => {
+      // tslint:disable-next-line:no-console
+      console.log('Request: ', requestData);
+      // tslint:disable-next-line:no-console
+      console.log('Response: ', response);
+      callback(response);
+    },
+  );
+
+};
 
 class Main extends React.Component<IMainProps, IMainState> {
   private url: string;
@@ -18,43 +33,53 @@ class Main extends React.Component<IMainProps, IMainState> {
     this.url = window.location.host;
     this.state = {
       error: null,
+      isValid: 'loading',
       message: '',
     };
   }
 
   public componentDidMount() {
-    const self = this;
-    // console.log(window.location);
-    chrome.runtime.sendMessage(
-      { message: CONTENT_MESSAGE_TYPES.CURRENT_URL, url: this.url },
-      function(response: any) {
-        console.log("TCL: Main -> componentDidMount -> response", response)
-        // if (response.success) {
-        //   self.setState({
-        //     ...self.state,
-        //     message: response.message,
-        //   });
-        // } else {
-        //   self.setState({
-        //     ...this.state,
-        //     error: response.error,
-        //   });
-        // }
-      },
-    );
+    const responseHandler = (response: any) => {
+      if (response.success) {
+        if (response.isValid) {
+          this.setState({
+            ...this.state,
+            isValid: response.isValid,
+            message: response.message,
+          });
+        } else {
+          this.setState({
+            ...this.state,
+            error: 'This is not a valid Shopify Site',
+            isValid: response.isValid,
+          });
+        }
+      } else {
+        // @todo (rajat, 8-10-2019): handle failed response
+      }
+    };
+    sendMessage({ message: CONTENT_MESSAGE_TYPES.CURRENT_URL, url: this.url }, responseHandler);
+
   }
   public render() {
+    console.log(this.state);
+    const scrapeClickHandler = this.scrapeCurrentWebsite.bind(this);
     return (
       <div id='shopify-scraper'>
         <h1>{window.location.host}</h1>
-        {this.state.error && <div>{this.state.error}</div>}
-        {!this.state.error && <button onClick={this.scrapeCurrentWebsite.bind(this)}>
-          Scrape now
-        </button>}
+        {!this.state.isValid && <div>{this.state.error}</div>}
+        {this.state.isValid &&
+          (
+            <button onClick={scrapeClickHandler}>
+              Scrape now
+            </button>
+          )
+        }
         {this.state.message}
       </div>
     );
   }
+
   private scrapeCurrentWebsite() {
 
   }

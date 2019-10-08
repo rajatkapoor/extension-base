@@ -10371,7 +10371,9 @@ chrome.browserAction.onClicked.addListener(function (tab) {
       message: 'clicked_browser_action'
     });
   });
-});
+}); // The function registered here as a listener has to be a non async function;
+// This function has to return true and call all the internal async functions in a non awaited call;
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   var logAndSend = function logAndSend(response) {
     console.log(request);
@@ -10380,6 +10382,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   };
 
   if (request.message === _constants__WEBPACK_IMPORTED_MODULE_0__["CONTENT_MESSAGE_TYPES"].CURRENT_URL) {
+    // do not make awaited calls and return true
     handleUrlRequest(request.url, logAndSend);
   }
 
@@ -10405,7 +10408,8 @@ function () {
           case 4:
             _context.t1 = _context.sent;
             _context.t2 = {
-              success: _context.t1
+              isValid: _context.t1,
+              success: true
             };
             (0, _context.t0)(_context.t2);
             return _context.abrupt("return", true);

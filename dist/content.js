@@ -32656,6 +32656,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _content_less__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_content_less__WEBPACK_IMPORTED_MODULE_3__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -32679,6 +32683,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
+var sendMessage = function sendMessage(requestData, callback) {
+  chrome.runtime.sendMessage(requestData, function (response) {
+    // tslint:disable-next-line:no-console
+    console.log('Request: ', requestData); // tslint:disable-next-line:no-console
+
+    console.log('Response: ', response);
+    callback(response);
+  });
+};
+
 var Main =
 /*#__PURE__*/
 function (_React$Component) {
@@ -32696,6 +32710,7 @@ function (_React$Component) {
     _this.url = window.location.host;
     _this.state = {
       error: null,
+      isValid: 'loading',
       message: ''
     };
     return _this;
@@ -32704,31 +32719,37 @@ function (_React$Component) {
   _createClass(Main, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var self = this; // console.log(window.location);
+      var _this2 = this;
 
-      chrome.runtime.sendMessage({
+      var responseHandler = function responseHandler(response) {
+        if (response.success) {
+          if (response.isValid) {
+            _this2.setState(_objectSpread({}, _this2.state, {
+              isValid: response.isValid,
+              message: response.message
+            }));
+          } else {
+            _this2.setState(_objectSpread({}, _this2.state, {
+              error: 'This is not a valid Shopify Site',
+              isValid: response.isValid
+            }));
+          }
+        } else {// @todo (rajat, 8-10-2019): handle failed response
+        }
+      };
+
+      sendMessage({
         message: _constants__WEBPACK_IMPORTED_MODULE_2__["CONTENT_MESSAGE_TYPES"].CURRENT_URL,
         url: this.url
-      }, function (response) {
-        console.log("TCL: Main -> componentDidMount -> response", response); // if (response.success) {
-        //   self.setState({
-        //     ...self.state,
-        //     message: response.message,
-        //   });
-        // } else {
-        //   self.setState({
-        //     ...this.state,
-        //     error: response.error,
-        //   });
-        // }
-      });
+      }, responseHandler);
     }
   }, {
     key: "render",
     value: function render() {
+      console.log(this.state);
       return react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", {
         id: "shopify-scraper"
-      }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("h1", null, window.location.host), this.state.error && react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", null, this.state.error), !this.state.error && react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("button", {
+      }, react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("h1", null, window.location.host), !this.state.isValid && react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("div", null, this.state.error), this.state.isValid && react__WEBPACK_IMPORTED_MODULE_0__["createElement"]("button", {
         onClick: this.scrapeCurrentWebsite.bind(this)
       }, "Scrape now"), this.state.message);
     }
