@@ -1,0 +1,31 @@
+{
+    "name": "Shopify Scraper Reloaded",
+    "version": "0.0.1",
+    "manifest_version": 2,
+    "description": "Extension for scraping Shopify Websites/stores in one-click",
+    "homepage_url": "https://rajatkapoor.me",
+    "browser_action": {
+      "default_title": "Shopify Scraper",
+      "default_popup": "popup.html"
+    },
+    "background": {
+      "scripts": [
+        "background.js"
+      ],
+      "persistent": true
+    },
+    "permissions": [
+      "https://*/*"
+    ],
+    "content_security_policy": "default-src 'self';",
+    "content_scripts": [
+      {
+        "matches": [
+          "https://*/*"
+        ],
+        "js": [
+          "content.js"
+        ]
+      }
+    ]
+  }
