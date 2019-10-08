@@ -1,0 +1,8 @@
+export enum CONTENT_MESSAGE_TYPES {
+    CURRENT_URL,
+    SCRAPE_URL,
+}
+
+export enum BACKGROUND_MESSAGE_TYPES {
+    SCRAPE_PROGRESS,
+}

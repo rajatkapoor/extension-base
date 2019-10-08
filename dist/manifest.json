@@ -5,8 +5,7 @@
     "description": "Extension for scraping Shopify Websites/stores in one-click",
     "homepage_url": "https://rajatkapoor.me",
     "browser_action": {
-      "default_title": "Shopify Scraper",
-      "default_popup": "popup.html"
+      "default_title": "Shopify Scraper"
     },
     "background": {
       "scripts": [

@@ -30,7 +30,7 @@ module.exports = {
 	devtool : 'cheap-source-map',
 
 	entry: {
-		content: './src/content.ts',
+		content: './src/content.tsx',
 		background: './src/background.ts'
 	},
 
